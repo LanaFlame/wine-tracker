@@ -1,0 +1,5 @@
+$kind: collection
+name: Wine Tracker API
+variables:
+  baseUrl: ""
+  wineId: ""

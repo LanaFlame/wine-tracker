@@ -1,5 +1,7 @@
 package com.example.wine_tracker.service;
 
+import com.example.wine_tracker.dto.WineRequest;
+import com.example.wine_tracker.dto.WineResponse;
 import com.example.wine_tracker.model.Wine;
 import com.example.wine_tracker.repository.WineRepository;
 import org.springframework.stereotype.Service;
@@ -16,17 +18,71 @@ public class WineService {
         this.wineRepository = wineRepository;
     }
 
-    public List<Wine> getAllWines() {
-        return wineRepository.findAll();
+    public List<WineResponse> getAllWines() {
+        return wineRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
-    public Wine getWineById(Long id) {
-        return wineRepository.findById(id).orElse(null);
+    public WineResponse getWineById(Long id) {
+        Wine wine = wineRepository.findById(id).orElse(null);
+
+        if (wine == null) {
+            return null;
+        }
+
+        return mapToResponse(wine);
     }
 
-    public Wine saveWine(Wine wine) {
+    public WineResponse saveWine(WineRequest request) {
+        Wine wine = new Wine();
+        wine.setName(request.getName());
+        wine.setWinery(request.getWinery());
+        wine.setCountry(request.getCountry());
+        wine.setYear(request.getYear());
+        wine.setRating(request.getRating());
+        wine.setNotes(request.getNotes());
         wine.setCreatedAt(LocalDateTime.now());
-        return wineRepository.save(wine);
+
+        Wine savedWine = wineRepository.save(wine);
+
+        return mapToResponse(savedWine);
     }
 
+    public WineResponse updateWine(Long id, WineRequest request) {
+        Wine existingWine = wineRepository.findById(id).orElse(null);
+
+        if (existingWine == null) {
+            return null;
+        }
+
+        existingWine.setName(request.getName());
+        existingWine.setWinery(request.getWinery());
+        existingWine.setCountry(request.getCountry());
+        existingWine.setYear(request.getYear());
+        existingWine.setRating(request.getRating());
+        existingWine.setNotes(request.getNotes());
+
+        Wine updatedWine = wineRepository.save(existingWine);
+
+        return mapToResponse(updatedWine);
+    }
+
+    public void deleteWine(Long id) {
+        wineRepository.deleteById(id);
+    }
+
+    private WineResponse mapToResponse(Wine wine) {
+        WineResponse response = new WineResponse();
+        response.setId(wine.getId());
+        response.setName(wine.getName());
+        response.setWinery(wine.getWinery());
+        response.setCountry(wine.getCountry());
+        response.setYear(wine.getYear());
+        response.setRating(wine.getRating());
+        response.setNotes(wine.getNotes());
+        response.setCreatedAt(wine.getCreatedAt());
+        return response;
+    }
 }

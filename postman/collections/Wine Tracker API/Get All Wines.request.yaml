@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get All Wines
+url: "{{baseUrl}}/wines"
+method: GET
+order: 3670773932031163

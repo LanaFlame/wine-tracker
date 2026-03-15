@@ -1,0 +1,28 @@
+$kind: http-request
+name: Create Wine
+url: "{{baseUrl}}/wines"
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"name\": \"Chianti Classico\",\r
+
+    \  \"winery\": \"Castello di Ama\",\r
+
+    \  \"country\": \"Italy\",\r
+
+    \  \"year\": 2019,\r
+
+    \  \"rating\": 4,\r
+
+    \  \"notes\": \"cherry, leather\"\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: |-
+      const responseJson = pm.response.json();
+      pm.collectionVariables.set("wineId", responseJson.id);
+    language: text/javascript
+order: 1773498374023

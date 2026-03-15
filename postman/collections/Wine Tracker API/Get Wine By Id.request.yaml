@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get Wine By Id
+url: "{{baseUrl}}/wines/{{wineId}}"
+method: GET
+order: 4235489623393324

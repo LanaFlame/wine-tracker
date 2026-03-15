@@ -1,6 +1,7 @@
 package com.example.wine_tracker.controller;
 
-import com.example.wine_tracker.model.Wine;
+import com.example.wine_tracker.dto.WineRequest;
+import com.example.wine_tracker.dto.WineResponse;
 import com.example.wine_tracker.service.WineService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,18 +18,27 @@ public class WineController {
     }
 
     @GetMapping
-    public List<Wine> getAllWines() {
+    public List<WineResponse> getAllWines() {
         return wineService.getAllWines();
     }
 
     @GetMapping("/{id}")
-    public Wine getWineById(@PathVariable Long id) {
+    public WineResponse getWineById(@PathVariable Long id) {
         return wineService.getWineById(id);
     }
 
     @PostMapping
-    public Wine createWine(@RequestBody Wine wine) {
-        return wineService.saveWine(wine);
+    public WineResponse createWine(@RequestBody WineRequest request) {
+        return wineService.saveWine(request);
     }
 
+    @PutMapping("/{id}")
+    public WineResponse updateWine(@PathVariable Long id, @RequestBody WineRequest request) {
+        return wineService.updateWine(id, request);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteWine(@PathVariable Long id) {
+        wineService.deleteWine(id);
+    }
 }

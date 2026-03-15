@@ -1,0 +1,12 @@
+$kind: http-request
+name: Delete Wine
+url: "{{baseUrl}}/wines/{{wineId}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 200 or 204", () => {
+        pm.expect(pm.response.code).to.be.oneOf([200, 204]);
+      });
+    language: text/javascript
+order: 4000

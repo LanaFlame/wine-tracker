@@ -2,6 +2,7 @@ package com.example.wine_tracker.service;
 
 import com.example.wine_tracker.dto.WineRequest;
 import com.example.wine_tracker.dto.WineResponse;
+import com.example.wine_tracker.exception.WineNotFoundException;
 import com.example.wine_tracker.model.Wine;
 import com.example.wine_tracker.repository.WineRepository;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,8 @@ public class WineService {
     }
 
     public WineResponse getWineById(Long id) {
-        Wine wine = wineRepository.findById(id).orElse(null);
-
-        if (wine == null) {
-            return null;
-        }
+        Wine wine = wineRepository.findById(id)
+                .orElseThrow(() -> new WineNotFoundException(id));
 
         return mapToResponse(wine);
     }
@@ -51,11 +49,8 @@ public class WineService {
     }
 
     public WineResponse updateWine(Long id, WineRequest request) {
-        Wine existingWine = wineRepository.findById(id).orElse(null);
-
-        if (existingWine == null) {
-            return null;
-        }
+        Wine existingWine = wineRepository.findById(id)
+                .orElseThrow(() -> new WineNotFoundException(id));
 
         existingWine.setName(request.getName());
         existingWine.setWinery(request.getWinery());
@@ -70,7 +65,10 @@ public class WineService {
     }
 
     public void deleteWine(Long id) {
-        wineRepository.deleteById(id);
+        Wine existingWine = wineRepository.findById(id)
+                .orElseThrow(() -> new WineNotFoundException(id));
+
+        wineRepository.delete(existingWine);
     }
 
     private WineResponse mapToResponse(Wine wine) {

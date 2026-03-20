@@ -3,6 +3,7 @@ package com.example.wine_tracker.controller;
 import com.example.wine_tracker.dto.WineRequest;
 import com.example.wine_tracker.dto.WineResponse;
 import com.example.wine_tracker.service.WineService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,12 +29,12 @@ public class WineController {
     }
 
     @PostMapping
-    public WineResponse createWine(@RequestBody WineRequest request) {
+    public WineResponse createWine(@Valid @RequestBody WineRequest request) {
         return wineService.saveWine(request);
     }
 
     @PutMapping("/{id}")
-    public WineResponse updateWine(@PathVariable Long id, @RequestBody WineRequest request) {
+    public WineResponse updateWine(@PathVariable Long id, @Valid @RequestBody WineRequest request) {
         return wineService.updateWine(id, request);
     }
 

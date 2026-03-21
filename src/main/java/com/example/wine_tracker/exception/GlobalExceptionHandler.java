@@ -1,5 +1,7 @@
 package com.example.wine_tracker.exception;
 
+import com.example.wine_tracker.dto.ErrorResponse;
+import com.example.wine_tracker.dto.ValidationErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,29 +16,30 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(WineNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleWineNotFound(WineNotFoundException ex) {
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", 404);
-        error.put("error", "Not Found");
-        error.put("message", ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleWineNotFound(WineNotFoundException ex) {
+        ErrorResponse error = new ErrorResponse();
+        error.setTimestamp(LocalDateTime.now());
+        error.setStatus(404);
+        error.setError("Not Found");
+        error.setMessage(ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
-        Map<String, Object> error = new HashMap<>();
+    public ResponseEntity<ValidationErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> validationErrors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(fieldError ->
                 validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage())
         );
 
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", 400);
-        error.put("error", "Bad Request");
-        error.put("messages", validationErrors);
+        ValidationErrorResponse error = new ValidationErrorResponse();
+
+        error.setTimestamp(LocalDateTime.now());
+        error.setStatus(400);
+        error.setError("Bad Request");
+        error.setMessages(validationErrors);
 
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
